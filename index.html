@@ -182,6 +182,17 @@
       margin-top: 3px; font-family: inherit;
     }
     .sub-btn:hover { background: var(--navy-light); }
+    .form-alert {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #fff4e5;
+      color: #7a4f08;
+      border: 1px solid #ffddb3;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -366,17 +377,18 @@
         </div>
       </div>
 
-      <div class="cf">
+      <form id="contact-form" class="cf">
         <h3 id="form-title"></h3>
         <div class="fr2">
-          <div class="fr"><label id="lbl-fn"></label><input type="text"   placeholder="Jana"/></div>
-          <div class="fr"><label id="lbl-ln"></label><input type="text"   placeholder="Peeters"/></div>
+          <div class="fr"><label id="lbl-fn"></label><input id="first-name" type="text" placeholder="Jana"/></div>
+          <div class="fr"><label id="lbl-ln"></label><input id="last-name" type="text" placeholder="Peeters"/></div>
         </div>
-        <div class="fr"><label id="lbl-em"></label><input type="email" placeholder="jana@bedrijf.be"/></div>
+        <div class="fr"><label id="lbl-em"></label><input id="email" type="email" placeholder="jana@bedrijf.be"/></div>
         <div class="fr"><label id="lbl-top"></label><select id="topic-sel"></select></div>
         <div class="fr"><label id="lbl-msg"></label><textarea id="msg-ph"></textarea></div>
-        <button class="sub-btn" id="sub-btn"></button>
-      </div>
+        <button type="submit" class="sub-btn" id="sub-btn"></button>
+        <div class="form-alert" id="form-alert" role="alert"></div>
+      </form>
     </div>
   </div>
 
@@ -402,14 +414,14 @@ var T = {
     bannerSub: 'Official Social Enterprise - Registered in Belgium',
     svcTitle: 'Our Services',
     svcSub:   'Practical expertise delivering social value across three key domains',
-    s1t: 'Laptop & IT Refurbishment', s1badge: 'Circular Economy',
-    s1d: 'We collect, repair, and refurbish laptops and IT equipment, extending product life cycles and reducing e-waste. Certified devices are redistributed to schools, NGOs, and individuals who need affordable technology access.',
+    s1t: 'Laptop Lending Service', s1badge: 'Circular Economy',
+    s1d: 'We collect, repair, and refurbish laptops, extending product life cycles and reducing e-waste. The devices are then reused in our laptop lending service.',
     s1chips: ['Device collection','Repair & testing','Data wiping','Redistribution','Corporate bulk pickup'],
     s2t: 'Textile Services', s2badge: 'Sustainable Fashion',
     s2d: 'From sorting and upcycling to alterations and uniform management, our textile team handles second-hand clothing streams with care and craftsmanship - reducing waste while creating skilled employment.',
     s2chips: ['Sorting & grading','Upcycling','Alterations','Uniform logistics','Collection drives'],
     s3t: 'Event Services', s3badge: 'Community & Hospitality',
-    s3d: 'Our event crew brings dedication and professionalism to festivals, corporate gatherings, and community events - from setup and catering support to logistics coordination.',
+    s3d: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     s3chips: ['Event setup & breakdown','Catering support','Logistics crew','Festivals','Corporate events'],
     conTitle:   'Get in Touch',
     conSub:     "Ready to collaborate or learn more? We'd love to hear from you.",
@@ -437,14 +449,14 @@ var T = {
     bannerSub: 'Officiele Sociale Onderneming - Geregistreerd in Belgie',
     svcTitle: 'Onze Diensten',
     svcSub:   'Praktische expertise met sociale meerwaarde in drie domeinen',
-    s1t: 'Laptop- & IT-refurbishment', s1badge: 'Circulaire economie',
-    s1d: "We zamelen laptops en IT-apparatuur in, repareren ze en geven ze een tweede leven. Gecertificeerde toestellen worden herverdeeld aan scholen, ngo's en particulieren.",
+    s1t: 'Laptop Ontleendienst', s1badge: 'Circulaire economie',
+    s1d: "We zamelen laptops in, repareren ze en geven ze een tweede leven. Deze toestellen geven we vervolgens een nieuw leven in onze ontleendienst.",
     s1chips: ['Inzameling','Reparatie & testen','Datawissing','Herverdeling','Bedrijfsinzameling'],
     s2t: 'Textieldiensten', s2badge: 'Duurzame mode',
     s2d: 'Van sorteren en upcyclen tot aanpassingen en uniformbeheer: ons textielteam behandelt tweedehandskledingstromen met zorg en vakmanschap.',
     s2chips: ['Sorteren & klasseren','Upcyclen','Aanpassingen','Uniformlogistiek','Inzamelacties'],
     s3t: 'Evenementendiensten', s3badge: 'Gemeenschap & horeca',
-    s3d: 'Ons eventteam brengt inzet en professionalisme naar festivals, bedrijfsevenementen en buurtactiviteiten - van opbouw en cateringondersteuning tot logistieke coordinatie.',
+    s3d: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     s3chips: ['Opbouw & afbraak','Cateringondersteuning','Logistiek team','Festivals','Bedrijfsevenementen'],
     conTitle:   'Neem contact op',
     conSub:     'Wil je samenwerken of meer weten? We horen graag van je.',
@@ -472,14 +484,14 @@ var T = {
     bannerSub: 'Entreprise Sociale Officielle - Enregistree en Belgique',
     svcTitle: 'Nos Services',
     svcSub:   'Une expertise pratique pour une valeur sociale dans trois domaines cles',
-    s1t: 'Reconditionnement PC & IT', s1badge: 'Economie circulaire',
-    s1d: 'Nous collectons, reparons et reconditionnons des ordinateurs portables et du materiel informatique. Les appareils certifies sont redistribues aux ecoles, ONG et particuliers.',
+    s1t: 'Service de location d\'ordinateurs portables', s1badge: 'Economie circulaire',
+    s1d: 'Nous collectons, reparons et reconditionnons des ordinateurs portables. Ceux-ci sont ensuite remis en circulation sous un service de location.',
     s1chips: ["Collecte d'appareils",'Reparation & tests','Effacement des donnees','Redistribution','Collecte en entreprise'],
     s2t: 'Services Textiles', s2badge: 'Mode durable',
     s2d: "Du tri et upcycling aux retouches et gestion d'uniformes, notre equipe textile traite les flux de vetements de seconde main avec soin.",
     s2chips: ['Tri & classement','Upcycling','Retouches','Logistique uniformes','Collectes'],
     s3t: 'Services Evenementiels', s3badge: 'Communaute & hospitalite',
-    s3d: "Notre equipe apporte engagement et professionnalisme aux festivals, evenements d'entreprise et rassemblements communautaires.",
+    s3d: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     s3chips: ['Installation & demontage','Support restauration','Equipe logistique','Festivals','Evenements entreprise'],
     conTitle:   'Nous contacter',
     conSub:     "Pret a collaborer ou en savoir plus ? Nous serions ravis d'avoir de vos nouvelles.",
@@ -583,6 +595,36 @@ function cloneLogo(el, size) {
 }
 cloneLogo(document.getElementById('nav-logo'),  38);
 cloneLogo(document.getElementById('hero-logo'), 112);
+
+/* ── CONTACT FORM SUBMIT ── */
+function submitContactForm(event) {
+  event.preventDefault();
+  var data = {
+    firstName: document.getElementById('first-name').value.trim(),
+    lastName:  document.getElementById('last-name').value.trim(),
+    email:     document.getElementById('email').value.trim(),
+    topic:     document.getElementById('topic-sel').value,
+    message:   document.getElementById('msg-ph').value.trim()
+  };
+
+  console.log('Contact form data', data);
+
+  var alertEl = document.getElementById('form-alert');
+  alertEl.textContent = 'This form is not operational yet. Please contact us directly by email for now (info@denideal.be).';
+  alertEl.style.display = 'block';
+  document.getElementById('sub-btn').textContent = 'Send Message';
+
+  // TODO: replace this with your actual send logic (fetch / API call, email service, etc.)
+  // Example:
+  // fetch('/api/contact', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(data)
+  // }).then(function(response) {
+  //   // handle success or error
+  // });
+}
+document.getElementById('contact-form').addEventListener('submit', submitContactForm);
 
 /* ── INIT ── */
 applyLang('en');
