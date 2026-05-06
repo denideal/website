@@ -209,7 +209,7 @@
      DEN IDEAL LOGO (SVG, reused via JS clone)
 ═══════════════════════════════════════════ -->
 <template id="logo-tpl">
-  <img src=""/img/den%20Ideal%20logo.png" alt="Logo" width="100" height="100">
+  <img src="img/logo.png" alt="Logo" width="100" height="100">
 </template>
 
 <!-- ═══════════════════════════════════════════
@@ -576,10 +576,10 @@ function showPage(name, btn) {
 function cloneLogo(el, size) {
   var tpl   = document.getElementById('logo-tpl');
   var clone = tpl.content.cloneNode(true);
-  var svg   = clone.querySelector('svg');
-  svg.style.width  = size + 'px';
-  svg.style.height = size + 'px';
-  el.appendChild(svg);
+  var img   = clone.querySelector('img');
+  img.style.width  = size + 'px';
+  img.style.height = size + 'px';
+  el.appendChild(img);
 }
 cloneLogo(document.getElementById('nav-logo'),  38);
 cloneLogo(document.getElementById('hero-logo'), 112);
