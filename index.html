@@ -631,3 +631,26 @@ applyLang('nl');
 </script>
 </body>
 </html>
+/* This ensures the main container is never wider than the screen */
+.site {
+  max-width: 100% !important;
+  width: auto !important;
+  margin: 0 auto;
+  overflow-x: hidden; /* Prevents side-scrolling */
+}
+
+/* Responsive adjustments for phones */
+@media (max-width: 768px) {
+  .nav, .page {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px; /* Adds a little breathing room on the sides */
+    box-sizing: border-box; /* Ensures padding doesn't add to the width */
+  }
+
+  /* If you have images, make sure they don't pop out of the layout */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
