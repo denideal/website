@@ -17,20 +17,15 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, Helvetica, sans-serif; background: #f4f6fb; }
-    .site { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+    .site { max-width: 100%; margin: 0; padding: 0 32px 40px; }
 
     /* ── NAV ── */
     .nav {
-     /* Responsive Site Container */
-.site { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
-
-/* ── NAV ── */
-.nav {
-  background: var(--navy-dark);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 1.5rem; height: 60px;
-  border-radius: 0 0 12px 12px;
-}
+      background: var(--navy-dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem; height: 60px;
+      border-radius: 0 0 12px 12px;
+      position: sticky; top: 0; z-index: 200;
     }
     .nav-left  { display: flex; align-items: center; gap: 10px; }
     .nav-logo-circle {
