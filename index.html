@@ -379,15 +379,15 @@
         </div>
       </div>
 
-      <form id="contact-form" class="cf">
+      <form id="contact-form" class="cf" action="/contact.php" method="post">
         <h3 id="form-title"></h3>
         <div class="fr2">
-          <div class="fr"><label id="lbl-fn"></label><input id="first-name" type="text" placeholder="Jana"/></div>
-          <div class="fr"><label id="lbl-ln"></label><input id="last-name" type="text" placeholder="Peeters"/></div>
+          <div class="fr"><label id="lbl-fn"></label><input id="first-name" name="firstName" type="text" placeholder="Jana"/></div>
+          <div class="fr"><label id="lbl-ln"></label><input id="last-name" name="lastName" type="text" placeholder="Peeters"/></div>
         </div>
-        <div class="fr"><label id="lbl-em"></label><input id="email" type="email" placeholder="jana@bedrijf.be"/></div>
-        <div class="fr"><label id="lbl-top"></label><select id="topic-sel"></select></div>
-        <div class="fr"><label id="lbl-msg"></label><textarea id="msg-ph"></textarea></div>
+        <div class="fr"><label id="lbl-em"></label><input id="email" name="email" type="email" placeholder="jana@bedrijf.be"/></div>
+        <div class="fr"><label id="lbl-top"></label><select id="topic-sel" name="topic"></select></div>
+        <div class="fr"><label id="lbl-msg"></label><textarea id="msg-ph" name="message"></textarea></div>
         <button type="submit" class="sub-btn" id="sub-btn"></button>
         <div class="form-alert" id="form-alert" role="alert"></div>
       </form>
@@ -435,7 +435,10 @@ var T = {
     lblTop: 'Topic', lblMsg: 'Message',
     msgPh: 'Tell us about your project or question...',
     topics: ['Laptop & IT refurbishment','Textile services','Event services','Partnership enquiry','Other'],
-    subBtn: 'Send Message'
+    subBtn: 'Send Message',
+    formSuccess: 'Your message has been sent. We will contact you shortly.',
+    formErrorGeneric: 'Something went wrong while sending your message.',
+    formErrorNetwork: 'A network error occurred. Please try again later.'
   },
   nl: {
     tabs: ['Over ons', 'Diensten', 'Contact'],
@@ -470,7 +473,10 @@ var T = {
     lblTop: 'Onderwerp', lblMsg: 'Bericht',
     msgPh: 'Vertel ons over uw project of vraag...',
     topics: ['Laptop- & IT-refurbishment','Textieldiensten','Evenementendiensten','Partnerschapsaanvraag','Overige'],
-    subBtn: 'Bericht versturen'
+    subBtn: 'Bericht versturen',
+    formSuccess: 'Je bericht is verzonden. We nemen spoedig contact met je op.',
+    formErrorGeneric: 'Er is iets misgegaan bij het verzenden van je bericht.',
+    formErrorNetwork: 'Er is een netwerkfout opgetreden. Probeer het later opnieuw.'
   },
   fr: {
     tabs: ['A propos', 'Services', 'Contact'],
@@ -505,7 +511,10 @@ var T = {
     lblTop: 'Sujet', lblMsg: 'Message',
     msgPh: 'Parlez-nous de votre projet ou question...',
     topics: ['Reconditionnement PC & IT','Services textiles','Services evenementiels','Demande de partenariat','Autre'],
-    subBtn: 'Envoyer le message'
+    subBtn: 'Envoyer le message',
+    formSuccess: 'Votre message a été envoyé. Nous vous contacterons bientôt.',
+    formErrorGeneric: 'Une erreur est survenue lors de l\'envoi de votre message.',
+    formErrorNetwork: 'Une erreur réseau est survenue. Veuillez réessayer plus tard.'
   }
 };
 
@@ -529,6 +538,7 @@ function setLang(lang, btn, e) {
 /* ── APPLY TRANSLATIONS ── */
 function applyLang(lang) {
   var t = T[lang];
+  window.currentT = t;
   document.getElementById('tab-about').textContent    = t.tabs[0];
   document.getElementById('tab-services').textContent = t.tabs[1];
   document.getElementById('tab-contact').textContent  = t.tabs[2];
@@ -599,8 +609,28 @@ cloneLogo(document.getElementById('nav-logo'),  38);
 cloneLogo(document.getElementById('hero-logo'), 112);
 
 /* ── CONTACT FORM SUBMIT ── */
+function showFormAlert(message, isError) {
+  var alertEl = document.getElementById('form-alert');
+  alertEl.textContent = message;
+  alertEl.style.display = 'block';
+  alertEl.style.background = isError ? '#fff1f0' : '#e6f7ff';
+  alertEl.style.color = isError ? '#a8071a' : '#096dd9';
+  alertEl.style.borderColor = isError ? '#ffa39e' : '#91d5ff';
+}
+
+function clearFormAlert() {
+  var alertEl = document.getElementById('form-alert');
+  alertEl.style.display = 'none';
+}
+
 function submitContactForm(event) {
   event.preventDefault();
+  clearFormAlert();
+
+  var submitBtn = document.getElementById('sub-btn');
+  var defaultLabel = submitBtn.textContent;
+  submitBtn.textContent = 'Sending...';
+
   var data = {
     firstName: document.getElementById('first-name').value.trim(),
     lastName:  document.getElementById('last-name').value.trim(),
@@ -609,23 +639,29 @@ function submitContactForm(event) {
     message:   document.getElementById('msg-ph').value.trim()
   };
 
-  console.log('Contact form data', data);
-
-  var alertEl = document.getElementById('form-alert');
-  alertEl.textContent = 'This form is not operational yet. Please contact us directly by email for now (info@denideal.be).';
-  alertEl.style.display = 'block';
-  document.getElementById('sub-btn').textContent = 'Send Message';
-
-  // TODO: replace this with your actual send logic (fetch / API call, email service, etc.)
-  // Example:
-  // fetch('/api/contact', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(data)
-  // }).then(function(response) {
-  //   // handle success or error
-  // });
+  fetch('/contact.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    return response.json().then(function(json) {
+      return { ok: response.ok, json: json };
+    });
+  }).then(function(result) {
+    if (result.ok && result.json && result.json.success) {
+      showFormAlert(window.currentT.formSuccess, false);
+    } else {
+      var errorMessage = (result.json && (result.json.error || result.json.message)) || window.currentT.formErrorGeneric;
+      showFormAlert(errorMessage, true);
+    }
+  }).catch(function(error) {
+    showFormAlert(window.currentT.formErrorNetwork, true);
+    console.error('Contact submit error:', error);
+  }).finally(function() {
+    submitBtn.textContent = defaultLabel;
+  });
 }
+
 document.getElementById('contact-form').addEventListener('submit', submitContactForm);
 
 /* ── INIT ── */
