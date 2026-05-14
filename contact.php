@@ -66,11 +66,17 @@ function parseEnvFile($path) {
     return $vars;
 }
 
-$envPath = __DIR__ . '/.env';
+$envPath = __DIR__ . '/../.env';
 if (file_exists($envPath)) {
     $env = parseEnvFile($envPath);
     if (isset($env['POSTMARK_API_TOKEN']) && !defined('POSTMARK_API_TOKEN')) {
         define('POSTMARK_API_TOKEN', $env['POSTMARK_API_TOKEN']);
+    }
+    if (isset($env['POSTMARK_SENDER']) && !defined('POSTMARK_SENDER')) {
+        define('POSTMARK_SENDER', $env['POSTMARK_SENDER']);
+    }
+    if (isset($env['CONTACT_FORM_EMAIL']) && !defined('CONTACT_FORM_EMAIL')) {
+        define('CONTACT_FORM_EMAIL', $env['CONTACT_FORM_EMAIL']);
     }
 }
 
@@ -80,6 +86,21 @@ if (!$token) {
     echo json_encode(['error' => 'Postmark API token is not configured.']);
     exit;
 }
+
+$sender = defined('POSTMARK_SENDER') ? POSTMARK_SENDER : getenv('POSTMARK_SENDER');
+if (!$sender) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Postmark sender is not configured.']);
+    exit;
+}
+
+$contactFormEmail = defined('CONTACT_FORM_EMAIL') ? CONTACT_FORM_EMAIL : getenv('CONTACT_FORM_EMAIL');
+if (!$contactFormEmail) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Contact form email is not configured.']);
+    exit;
+}
+
 
 $subject = 'Contact form request';
 if ($topic) {
@@ -93,8 +114,8 @@ $bodyHtml = '<h2>New contact request</h2>' .
     '<p><strong>Message:</strong><br>' . nl2br(htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
 
 $postData = [
-    'From'    => 'no-reply@denideal.be',
-    'To'      => 'info@denideal.be',
+    'From'    => $sender,
+    'To'      => $contactFormEmail,
     'Subject' => $subject,
     'HtmlBody'=> $bodyHtml,
     'ReplyTo' => $email
