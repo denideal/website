@@ -165,7 +165,8 @@
       gap: 5px; min-height: 86px;
     }
     .map-stub p     { font-size: 13px; color: var(--navy); font-weight: 500; }
-    .map-stub small { font-size: 12px; color: #6b7a99; }
+    .map-stub a     { font-size: 12px; color: #6b7a99; text-decoration: none; }
+    .map-stub a:hover { text-decoration: underline; }
 
     .cf { background: white; border-radius: 12px; padding: 26px; border: 0.5px solid #dde3f0; }
     .cf h3 { font-size: 16px; font-weight: 500; color: #0f2347; margin-bottom: 16px; }
@@ -376,7 +377,7 @@
         <div class="map-stub">
           <svg width="22" height="22" stroke="#1a3a6b" fill="none" stroke-width="1.5"><use href="#ic-map"/></svg>
           <p>Potterijstraat 5, Mechelen</p>
-          <small id="map-lnk"></small>
+          <a id="map-lnk" class="map-link" href="https://www.openstreetmap.org/search?query=Potterijstraat%205%20Mechelen%20Belgium" target="_blank" rel="noopener"></a>
         </div>
       </div>
 
@@ -430,7 +431,7 @@ var T = {
     conSub:     "Ready to collaborate or learn more? We'd love to hear from you.",
     conDetails: 'Contact Details',
     lblAddr: 'Address', lblWeb: 'Website', lblEnt: 'Enterprise number',
-    btnEmail: 'Email us', mapLnk: 'View on Google Maps',
+    btnEmail: 'Email us', mapLnk: 'View on Openstreetmap',
     formTitle: 'Send us a message',
     lblFn: 'First name', lblLn: 'Last name', lblEm: 'Email address',
     lblTop: 'Topic', lblMsg: 'Message',
@@ -469,7 +470,7 @@ var T = {
     conSub:     'Wil je samenwerken of meer weten? We horen graag van je.',
     conDetails: 'Contactgegevens',
     lblAddr: 'Adres', lblWeb: 'Website', lblEnt: 'Ondernemingsnummer',
-    btnEmail: 'E-mail ons', mapLnk: 'Bekijk op Google Maps',
+    btnEmail: 'E-mail ons', mapLnk: 'Bekijk op Openstreetmap',
     formTitle: 'Stuur ons een bericht',
     lblFn: 'Voornaam', lblLn: 'Achternaam', lblEm: 'E-mailadres',
     lblTop: 'Onderwerp', lblMsg: 'Bericht',
@@ -508,7 +509,7 @@ var T = {
     conSub:     "Pret a collaborer ou en savoir plus ? Nous serions ravis d'avoir de vos nouvelles.",
     conDetails: 'Coordonnees',
     lblAddr: 'Adresse', lblWeb: 'Site web', lblEnt: "Numero d'entreprise",
-    btnEmail: 'Nous ecrire', mapLnk: 'Voir sur Google Maps',
+    btnEmail: 'Nous ecrire', mapLnk: 'Voir sur Openstreetmap',
     formTitle: 'Envoyez-nous un message',
     lblFn: 'Prenom', lblLn: 'Nom', lblEm: 'Adresse e-mail',
     lblTop: 'Sujet', lblMsg: 'Message',
@@ -579,7 +580,9 @@ function applyLang(lang) {
   document.getElementById('lbl-web').textContent     = t.lblWeb;
   document.getElementById('lbl-ent').textContent     = t.lblEnt;
   document.getElementById('btn-email').textContent   = t.btnEmail;
-  document.getElementById('map-lnk').textContent     = t.mapLnk;
+  var mapLink = document.getElementById('map-lnk');
+  mapLink.textContent = t.mapLnk;
+  mapLink.href = 'https://www.openstreetmap.org/search?query=Potterijstraat%205%20Mechelen%20Belgium';
   document.getElementById('form-title').textContent  = t.formTitle;
   document.getElementById('lbl-fn').textContent      = t.lblFn;
   document.getElementById('lbl-ln').textContent      = t.lblLn;
