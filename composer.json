@@ -1,0 +1,5 @@
+{
+    "require": {
+        "lettermint/lettermint-php": "^2.0"
+    }
+}

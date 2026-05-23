@@ -4,6 +4,9 @@
 // Place your Postmark token in an environment variable: POSTMARK_API_TOKEN
 // Example form POST action: <form action="/contact.php" method="post">
 
+require __DIR__ . '/vendor/autoload.php';
+
+
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -69,28 +72,28 @@ function parseEnvFile($path) {
 $envPath = __DIR__ . '/../.env';
 if (file_exists($envPath)) {
     $env = parseEnvFile($envPath);
-    if (isset($env['POSTMARK_API_TOKEN']) && !defined('POSTMARK_API_TOKEN')) {
-        define('POSTMARK_API_TOKEN', $env['POSTMARK_API_TOKEN']);
+    if (isset($env['LETTERMINT_PROJECT_TOKEN']) && !defined('LETTERMINT_PROJECT_TOKEN')) {
+        define('LETTERMINT_PROJECT_TOKEN', $env['LETTERMINT_PROJECT_TOKEN']);
     }
-    if (isset($env['POSTMARK_SENDER']) && !defined('POSTMARK_SENDER')) {
-        define('POSTMARK_SENDER', $env['POSTMARK_SENDER']);
+    if (isset($env['SENDER']) && !defined('SENDER')) {
+        define('SENDER', $env['SENDER']);
     }
     if (isset($env['CONTACT_FORM_EMAIL']) && !defined('CONTACT_FORM_EMAIL')) {
         define('CONTACT_FORM_EMAIL', $env['CONTACT_FORM_EMAIL']);
     }
 }
 
-$token = defined('POSTMARK_API_TOKEN') ? POSTMARK_API_TOKEN : getenv('POSTMARK_API_TOKEN');
+$token = defined('LETTERMINT_PROJECT_TOKEN') ? LETTERMINT_PROJECT_TOKEN : getenv('LETTERMINT_PROJECT_TOKEN');
 if (!$token) {
     http_response_code(500);
-    echo json_encode(['error' => 'Postmark API token is not configured.']);
+    echo json_encode(['error' => 'Lettermint project token is not configured.']);
     exit;
 }
 
-$sender = defined('POSTMARK_SENDER') ? POSTMARK_SENDER : getenv('POSTMARK_SENDER');
+$sender = defined('SENDER') ? SENDER : getenv('SENDER');
 if (!$sender) {
     http_response_code(500);
-    echo json_encode(['error' => 'Postmark sender is not configured.']);
+    echo json_encode(['error' => 'Sender is not configured.']);
     exit;
 }
 
@@ -113,44 +116,68 @@ $bodyHtml = '<h2>New contact request</h2>' .
     '<p><strong>Topic:</strong> ' . htmlspecialchars($topic, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>' .
     '<p><strong>Message:</strong><br>' . nl2br(htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
 
-$postData = [
-    'From'    => $sender,
-    'To'      => $contactFormEmail,
-    'Subject' => $subject,
-    'HtmlBody'=> $bodyHtml,
-    'ReplyTo' => $email
-];
 
-$ch = curl_init('https://api.postmarkapp.com/email');
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Accept: application/json',
-    'Content-Type: application/json',
-    'X-Postmark-Server-Token: ' . $token,
-]);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+$message = Lettermint\Lettermint::email($token);
+$response = $message
+    ->from($sender)
+    ->to($contactFormEmail)
+    // ->cc($email) // Optional: CC the sender
+    ->subject($subject)
+    ->html($bodyHtml)
+    ->replyTo($email)
+    ->send();
+// echo "Email sent with ID: " . $response->message_id;
 
-$response = curl_exec($ch);
-$curlErr  = curl_error($ch);
-$status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+// $postData = [
+//     'From'    => $sender,
+//     'To'      => $contactFormEmail,
+//     'Subject' => $subject,
+//     'HtmlBody'=> $bodyHtml,
+//     'ReplyTo' => $email
+// ];
+// echo "Prepared email data: " . json_encode($postData) . "\n";
 
-if ($curlErr) {
+// $ch = curl_init('https://api.postmarkapp.com/email');
+// curl_setopt($ch, CURLOPT_POST, true);
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// curl_setopt($ch, CURLOPT_HTTPHEADER, [
+//     'Accept: application/json',
+//     'Content-Type: application/json',
+//     'X-Postmark-Server-Token: ' . $token,
+// ]);
+// curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+
+// $response = curl_exec($ch);
+// $curlErr  = curl_error($ch);
+// $status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+// curl_close($ch);
+
+// if ($curlErr) {
+//     http_response_code(500);
+//     echo json_encode(['error' => 'Postmark request failed: ' . $curlErr]);
+//     exit;
+// }
+
+// $decoded = json_decode($response, true);
+// if ($status >= 400 || !$decoded || isset($decoded['ErrorCode']) && $decoded['ErrorCode'] != 0) {
+//     http_response_code(500);
+//     echo json_encode([
+//         'error' => 'Postmark API error.',
+//         'details' => $decoded ?: $response,
+//     ]);
+//     exit;
+// }
+if (!$response) {
     http_response_code(500);
-    echo json_encode(['error' => 'Postmark request failed: ' . $curlErr]);
+    echo json_encode(['error' => 'Failed to send email.']);
     exit;
 }
-
-$decoded = json_decode($response, true);
-if ($status >= 400 || !$decoded || isset($decoded['ErrorCode']) && $decoded['ErrorCode'] != 0) {
+$validStatuses = ["pending", "processed", "delivered", "opened", "queued", "clicked"];
+if (!isset($response->status) || !in_array($response->status, $validStatuses, true)) {
     http_response_code(500);
-    echo json_encode([
-        'error' => 'Postmark API error.',
-        'details' => $decoded ?: $response,
-    ]);
+    echo json_encode(['error' => 'Email API error.', 'details' => $response]);
     exit;
 }
 
 http_response_code(200);
-echo json_encode(['success' => true, 'message' => 'Email sent.']);
+echo json_encode(['success' => true, 'message' => 'Email sent. (message ID: ' . $response->message_id . ')']);
